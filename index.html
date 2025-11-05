@@ -86,41 +86,61 @@
   </div>
   <button id="resetBtn" style="display:none;">Open Another Cookie</button>
 
-  <script type="module">
-    import OpenAI from "https://cdn.jsdelivr.net/npm/openai@4.0.0/dist/openai.min.js";
-
+  <script>
     const cookieBox = document.getElementById("cookieBox");
     const fortuneText = document.getElementById("fortuneText");
     const resetBtn = document.getElementById("resetBtn");
 
-    const client = new OpenAI({
-      apiKey: "YOUR_API_KEY_HERE",
-      dangerouslyAllowBrowser: true
-    });
+    function generateSmartFortune() {
+      const openers = [
+        "Today feels like the start of",
+        "You’re quietly becoming",
+        "Life is guiding you toward",
+        "Something inside you is ready for",
+        "Your heart already knows how to reach",
+        "The universe is smiling at your",
+        "Every small step you take brings you closer to",
+        "You carry within you the light of"
+      ];
 
-    async function getAIFortune() {
-      fortuneText.textContent = "🔮 Generating your fortune...";
-      try {
-        const completion = await client.chat.completions.create({
-          model: "gpt-5",
-          messages: [
-            { role: "system", content: "You are a fortune cookie that gives short, uplifting messages full of optimism and warmth." },
-            { role: "user", content: "Write a single positive, inspiring fortune message with no more than 20 words." }
-          ],
-        });
-        return completion.choices[0].message.content.trim();
-      } catch {
-        return "Even cookies need rest sometimes. Try again soon 🍀";
-      }
+      const middles = [
+        "something truly beautiful",
+        "a surprising opportunity",
+        "a peaceful breakthrough",
+        "the happiness you’ve been hoping for",
+        "a fresh beginning",
+        "a moment of deep joy",
+        "the success you once only dreamed of",
+        "a gentle transformation"
+      ];
+
+      const endings = [
+        "— trust yourself 🌈",
+        "— it’s already unfolding 🌸",
+        "— you’re doing better than you think ✨",
+        "— breathe and keep going 💫",
+        "— good things are already on their way 🍀",
+        "— believe in your own timing 🌞",
+        "— your glow is unstoppable 🌟",
+        "— your patience is paying off 🌷"
+      ];
+
+      const opener = openers[Math.floor(Math.random() * openers.length)];
+      const middle = middles[Math.floor(Math.random() * middles.length)];
+      const ending = endings[Math.floor(Math.random() * endings.length)];
+
+      return `${opener} ${middle} ${ending}`;
     }
 
-    cookieBox.addEventListener("click", async () => {
+    cookieBox.addEventListener("click", () => {
       if (cookieBox.classList.contains("cracked")) return;
       cookieBox.classList.add("cracked");
-      const aiFortune = await getAIFortune();
-      fortuneText.textContent = aiFortune;
-      fortuneText.classList.add("show-fortune");
-      resetBtn.style.display = "inline-block";
+      fortuneText.textContent = "🔮 Thinking...";
+      setTimeout(() => {
+        fortuneText.textContent = generateSmartFortune();
+        fortuneText.classList.add("show-fortune");
+        resetBtn.style.display = "inline-block";
+      }, 1000);
     });
 
     resetBtn.addEventListener("click", () => {
