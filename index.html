@@ -1,83 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unlimited Fortune Cookie 🍪</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fortune Cookie 🍪</title>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+    /* ===== Reset & Base ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
     body {
       background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
-      height: 100vh; display:flex; justify-content:center; align-items:center;
-      flex-direction:column; text-align:center;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      overflow: hidden;
     }
-    h1 { font-size:2rem; margin-bottom:20px; color:#333; text-shadow:0 2px 3px rgba(0,0,0,0.1);}
-    .cookie-container { position:relative; width:180px; height:180px; }
-    .cookie { width:100%; height:100%; border-radius:50%; background:radial-gradient(circle at 30% 30%, #dba159, #b97a3b); box-shadow:0 8px 20px rgba(0,0,0,0.2);}
-    .crack { position:absolute; top:50%; left:50%; width:80px; height:6px; background:#7a4e17; transform:translate(-50%,-50%) rotate(45deg); opacity:0; transition:opacity 0.3s ease;}
-    .fortune { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:#fff; padding:10px 20px; border-radius:6px; box-shadow:0 4px 10px rgba(0,0,0,0.15); font-weight:500; font-size:1rem; opacity:0; transition:all 0.6s ease; white-space:nowrap;}
-    .show-fortune { opacity:1; transform:translate(-50%, -80%);}
-    .cracked .cookie { animation: crackCookie 0.8s forwards; }
-    @keyframes crackCookie {0%{transform:rotate(0deg) scale(1);}50%{transform:rotate(10deg) scale(0.9);}100%{transform:rotate(-10deg) scale(0.8); opacity:0.8;}}
-    .cracked .crack { opacity:1; }
-    @media (max-width:600px) { h1{font-size:1.6rem;} .cookie-container{width:130px;height:130px;} .fortune{font-size:0.9rem;} }
+
+    h1 {
+      color: #333;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ===== Cookie Section ===== */
+    .cookie-container {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .cookie-container:hover {
+      transform: scale(1.05);
+    }
+
+    .cookie {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #dba159, #b97a3b);
+      position: relative;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .crack {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 80px;
+      height: 6px;
+      background: #7a4e17;
+      transform: translate(-50%, -50%) rotate(45deg);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .fortune {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      font-weight: 500;
+      font-size: 1rem;
+      opacity: 0;
+      transition: all 0.6s ease;
+      white-space: nowrap;
+    }
+
+    .show-fortune {
+      opacity: 1;
+      transform: translate(-50%, -80%);
+    }
+
+    /* ===== Animation ===== */
+    .cracked .cookie {
+      animation: crackCookie 0.8s forwards;
+    }
+
+    @keyframes crackCookie {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(10deg) scale(0.9); }
+      100% { transform: rotate(-10deg) scale(0.8); opacity: 0.8; }
+    }
+
+    .cracked .crack {
+      opacity: 1;
+    }
+
+    button {
+      background: #333;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      margin-top: 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: #555;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.6rem;
+      }
+      .cookie-container {
+        width: 130px;
+        height: 130px;
+      }
+      .fortune {
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>🥠 Unlimited Fortune Cookie!</h1>
+  <h1>🥠 Crack the Fortune Cookie!</h1>
   <div class="cookie-container" id="cookieBox">
     <div class="cookie"></div>
     <div class="crack"></div>
     <div class="fortune" id="fortuneText"></div>
   </div>
+  <button id="resetBtn" style="display:none;">Open Another Cookie</button>
 
   <script>
     const cookieBox = document.getElementById("cookieBox");
     const fortuneText = document.getElementById("fortuneText");
+    const resetBtn = document.getElementById("resetBtn");
 
-    // Templates with multiple options for dynamic generation
-    const templates = [
-      "{subject} {verb} {object} {emoji}",
-      "{adverb}, {subject} {verb} {object} {emoji}",
-      "{subject} will {verb} {object}, bringing {extra} {emoji}",
-      "Soon, {subject} will {verb} {object} {emoji}"
-    ];
+    // Word banks for dynamic fortune generation
+    const subjects = ["You", "Your friend", "Someone close to you", "A stranger"];
+    const verbs = ["will find", "will discover", "will achieve", "will encounter"];
+    const objects = ["great happiness", "an unexpected gift", "a new opportunity", "a pleasant surprise"];
+    const extras = ["soon 🌟", "this week ✨", "in an amazing way 🌈", "with joy 😊"];
 
-    const subjects = ["You", "Someone close to you", "Your efforts", "A friend", "Your courage", "A stranger", "Your dreams"];
-    const verbs = ["bring", "discover", "attract", "unlock", "experience", "achieve"];
-    const objects = ["great joy", "unexpected wealth", "a pleasant surprise", "new opportunities", "happiness and peace", "success", "inner strength"];
-    const adverbs = ["Quickly", "Unexpectedly", "Happily", "Soon", "Fortuitously"];
-    const extras = ["good fortune", "luck", "happiness", "prosperity", "blessings"];
-    const emojis = ["🌸","✨","🎁","💪","🌈","😊","😄","🌟","🍀"];
-
-    function pickRandom(array){ return array[Math.floor(Math.random()*array.length)]; }
-
-    function generateFortune(){
-      let template = pickRandom(templates);
-      return template
-        .replace("{subject}", pickRandom(subjects))
-        .replace("{verb}", pickRandom(verbs))
-        .replace("{object}", pickRandom(objects))
-        .replace("{adverb}", pickRandom(adverbs))
-        .replace("{extra}", pickRandom(extras))
-        .replace("{emoji}", pickRandom(emojis));
+    // Generate a random fortune
+    function generateFortune() {
+      const subject = subjects[Math.floor(Math.random() * subjects.length)];
+      const verb = verbs[Math.floor(Math.random() * verbs.length)];
+      const object = objects[Math.floor(Math.random() * objects.length)];
+      const extra = extras[Math.floor(Math.random() * extras.length)];
+      return `${subject} ${verb} ${object} ${extra}`;
     }
 
-    function showFortune(){
+    // Click cookie to show fortune
+    cookieBox.addEventListener("click", () => {
+      if (cookieBox.classList.contains("cracked")) return;
+
       cookieBox.classList.add("cracked");
-      setTimeout(()=>{
-        fortuneText.textContent = generateFortune();
-        fortuneText.classList.add("show-fortune");
-      },800);
-      setTimeout(()=>{
-        cookieBox.classList.remove("cracked");
-        fortuneText.classList.remove("show-fortune");
-        fortuneText.textContent="";
-      },4000);
-    }
 
-    showFortune();
-    setInterval(showFortune,5000);
+      const randomFortune = generateFortune();
+
+      setTimeout(() => {
+        fortuneText.textContent = randomFortune;
+        fortuneText.classList.add("show-fortune");
+        resetBtn.style.display = "inline-block";
+      }, 800);
+    });
+
+    // Reset cookie
+    resetBtn.addEventListener("click", () => {
+      cookieBox.classList.remove("cracked");
+      fortuneText.classList.remove("show-fortune");
+      fortuneText.textContent = "";
+      resetBtn.style.display = "none";
+    });
   </script>
 </body>
 </html>
